@@ -19,7 +19,7 @@ async function handler(req, res) {
 
       const meetups_collection = database.collection('meetups');
 
-      const result = await meetups_collection.insertOne(data);
+      await meetups_collection.insertOne(data);
       console.log(`document inserted as ${data}`);
     } finally {
       // Ensures that the client will close when you finish/error

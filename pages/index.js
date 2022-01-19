@@ -1,28 +1,28 @@
+import { MongoClient } from 'mongodb';
+
 import MeetupList from '../components/meetups/MeetupList';
-const dummy_list = [
-  {
-    id: 'm1',
-    title: 'first-meetup',
-    image:
-      'https://images.pexels.com/photos/9815542/pexels-photo-9815542.jpeg?cs=srgb&dl=pexels-chakravarthy-sayani-9815542.jpg&fm=jpg',
-    address: 'first street 12',
-    description: 'first-meetup',
-  },
-  {
-    id: 'm2',
-    title: 'second-meetup',
-    image:
-      'https://images.pexels.com/photos/9815542/pexels-photo-9815542.jpeg?cs=srgb&dl=pexels-chakravarthy-sayani-9815542.jpg&fm=jpg',
-    address: 'second street 12',
-    description: 'second-meetup',
-  },
-];
+
 
 export async function getStaticProps(context) {
+  const _PASSWORD = process.env.MONGO_PASS;
+  const uri = `mongodb+srv://rishaan:${_PASSWORD}@cluster0.nektk.mongodb.net/meetup_database?retryWrites=true&w=majority`;
+
+  const client = await MongoClient.connect(uri);
+  const db = client.db('MEETUP');
+  const meetups_collection = db.collection('meetups');
+  const meetups = await meetups_collection.find({}).toArray();
+  client.close();
+  const meetupData = meetups.map((meetup) => ({
+    title: meetup.title,
+    address: meetup.address,
+    image: meetup.image,
+    description: meetup.description,
+    id: meetup._id.toString(),
+  }));
   return {
-    props: { dummy_list },
+    props: { meetupData },
   };
 }
 export default function Index(props) {
-  return <MeetupList meetups={props.dummy_list} />;
+  return <MeetupList meetups={props.meetupData} />;
 }
