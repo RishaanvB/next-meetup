@@ -21,6 +21,7 @@ export async function getStaticProps(context) {
   }));
   return {
     props: { meetupData },
+    revalidate: 1,
   };
 }
 export default function Index(props) {
